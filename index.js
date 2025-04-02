@@ -23,7 +23,27 @@ const userPreferenceSchema = new mongoose.Schema({
 
 const UserPreference = mongoose.model('UserPreference', userPreferenceSchema, 'userPreferences');
 
-// API Endpoint
+// Task Schema
+const taskSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String }
+});
+
+const Task = mongoose.model('Task', taskSchema, 'tasks');
+
+// API Endpoints
+app.post('/tasks', async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    const newTask = new Task({ title, description });
+    await newTask.save();
+    res.status(201).json({ success: true, task: newTask });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ success: false, error: 'Failed to create task' });
+  }
+});
+
 app.post('/api/theme', async (req, res) => {
   try {
     const { theme } = req.body;
